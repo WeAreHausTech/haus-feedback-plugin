@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "haus-feedback",
+  "version": "0.3.0",
+  "description": "Leave feedback on your local site and send it to a new Claude Code session.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs2HX5cKBfMX33dS8hZlXS4oWRvHuSo+9ICYWYPgpXCdXisGLJ3IoL0jBpTY+6p/7yV0Ne1i0nDUVeBFbbKeEhtGxVw3P7MPh6VDSvjNqjwA3H1UtcHssayNznvIRiMy07Wz/23ih8NT2HpE9Or7cQoaLo2QyYgWy8AQbQfhFctDRZPXkz9pf7uzUR1fmO5iySnzuEaSISLzOScmrpAPOy45syZ6UmVfsFkOiIOK+0CWYhHmcIsJN7OLtJK6Gvfchg2eMjtzAHmQv2IGQ/8mmRtxdlGK1Pti5SU1KUxM60v/E/fwwR3q2F/LIbYbB1YUn1gXYM3lOGHWFyHHQW2dZLwIDAQAB",
+  "minimum_chrome_version": "116",
+  "action": {
+    "default_title": "haus-feedback"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "identity",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "https://eonuyqchabavbsfjyqhy.supabase.co/*"
+  ]
+}

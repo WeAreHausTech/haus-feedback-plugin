@@ -1,0 +1,12 @@
+{
+  "name": "haus-feedback",
+  "owner": { "name": "Haus" },
+  "description": "Haus plugins for Claude Code.",
+  "plugins": [
+    {
+      "name": "haus-feedback",
+      "source": "./plugin",
+      "description": "Triage visual feedback from Haus Feedback in Claude Code."
+    }
+  ]
+}

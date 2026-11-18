@@ -1,0 +1,6 @@
+{
+  "name": "haus-feedback",
+  "version": "0.3.2",
+  "author": { "name": "Haus" },
+  "description": "Bring Haus Feedback into Claude Code: list, read, fix and answer feedback on customer test environments, and set up projects and reporters."
+}
