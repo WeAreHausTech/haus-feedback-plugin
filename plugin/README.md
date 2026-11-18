@@ -1,39 +1,56 @@
 # haus-feedback plugin
 
-New here? Follow the getting-started guide (`docs/getting-started.md` in the private source repo WeAreHausTech/haus-feedback, or the README of the public WeAreHausTech/haus-feedback-plugin) for the whole install, from plugin to Chrome extension.
-
-Claude Code plugin for Haus Feedback: an MCP server (`dist/mcp.js`, bundled from `packages/mcp`), a native messaging host (`dist/native-host.js`, bundled from `packages/native-host`) and two skills (`skills/triage`, `skills/setup`).
-
-## Requirements
-
-1. Node 22 or newer on PATH (the MCP server is a Node bundle).
-2. The tools use the production API. Set `HAUS_FEEDBACK_API` only to use another one, for local development `http://127.0.0.1:55421/functions/v1/api`.
-3. No GitHub access needed: the plugin and the built extension are published to the public repo WeAreHausTech/haus-feedback-plugin. The source repo WeAreHausTech/haus-feedback stays private.
+Claude Code plugin for Haus Feedback (https://feedback.haus.se): read, fix and answer feedback from customer test environments, set up projects and reporters, and send local feedback from Chrome to Claude Code.
 
 ## Install
 
+The official install for every Haus colleague is the public repo [WeAreHausTech/haus-feedback-plugin](https://github.com/WeAreHausTech/haus-feedback-plugin). It holds only the built plugin and extension, so you need no GitHub account or seat. Access to feedback is decided by your `@haus.se` sign-in, not by GitHub.
+
+Needs Node 22 or newer on PATH.
+
 ```bash
 claude plugin marketplace add WeAreHausTech/haus-feedback-plugin
+```
+
+```bash
 claude plugin install haus-feedback@haus-feedback
 ```
 
-Then run `/haus-feedback:setup` or `/haus-feedback:triage`. Sign in with the `login` tool (admin, @haus.se). The session is stored in `~/.haus-feedback/credentials.json`.
+Restart Claude Code, ask "sign in to haus-feedback" (the `login` tool, `@haus.se` for admin), then run `/haus-feedback:setup` in a customer repo or `/haus-feedback:triage` to work through open feedback. The session is stored in `~/.haus-feedback/credentials.json`.
 
-## Chrome extension on this machine
+Already added the old private marketplace (`WeAreHausTech/haus-feedback`)? Remove it first with `claude plugin marketplace remove haus-feedback`, then run the two commands above.
 
-The extension sends local feedback to Claude Code through a native messaging host. It is not in the plugin (the plugin cache holds only `plugin/`), so it is loaded from a clone: the `extension` folder of the public WeAreHausTech/haus-feedback-plugin, or `packages/extension/dist` in the private source repo. The full path from a clean machine is in `docs/setup.md` of the source repo; in short:
+## Update
 
-1. Clone WeAreHausTech/haus-feedback-plugin (public; developers of haus-feedback itself clone the private WeAreHausTech/haus-feedback).
-2. Only when developing haus-feedback itself: in the clone, `pnpm install` and `pnpm dev`, then `pnpm --filter @haus-feedback/extension build:dev` for `packages/extension/dist-dev`, and start Claude Code with `HAUS_FEEDBACK_API=http://127.0.0.1:55421/functions/v1/api`. The extension and the MCP server must use the same API.
-3. Otherwise: the `extension` folder of the public clone (the same build as `packages/extension/dist`) and the default API (`HAUS_FEEDBACK_API` unset).
-4. Install this plugin, then run `install_native_host`. It writes `~/.haus-feedback/native-host.sh` (a wrapper that runs `dist/native-host.js` with this Node and sets `CLAUDE_BIN` and `HAUS_FEEDBACK_HOME`) and the host manifest `se.haus.feedback.json` into the NativeMessagingHosts folders of Chrome and Chromium (macOS: `~/Library/Application Support/...`, Linux: `~/.config/...`). `HAUS_FEEDBACK_NATIVE_HOSTS_DIRS` (path-delimited list) overrides the folders. Run it again after an nvm switch or a plugin update.
-5. Load the unpacked extension (`extension` in the public clone, or `dist-dev` / `dist` in the source clone) in `chrome://extensions` with Developer mode on, then restart Chrome.
-6. `map_origin` maps a local address (`localhost`, `*.localhost`, `127.0.0.1`, `[::1]`, `*.test`) to a project and the customer repo checkout, in `~/.haus-feedback/machine.json` (0600). `list_mappings` shows them. Origins in a project may use `*` for the host label and the port (`http://*.localhost:*`, `http://localhost:*`), but machine mappings match the origin exactly: map each address and port you use (for example `http://localhost:3000` and `http://localhost:5173`).
-7. On the mapped site, click the toolbar button, sign in with your @haus.se account, file feedback, then use the Queue tab (list button next to Feedback) and "Send to Claude".
-8. On the first send, macOS asks whether Chrome may control Terminal; allow it.
+```bash
+claude plugin marketplace update haus-feedback
+```
 
-## Local development
+Restart Claude Code, then ask Claude to "install the haus-feedback native host" again if you use the Chrome extension.
 
-1. `pnpm build` rewrites `plugin/dist/mcp.js`; commit it.
-2. The server talks to production by default. Set `HAUS_FEEDBACK_API=http://127.0.0.1:55421/functions/v1/api` in the environment you start Claude Code from to use the local Supabase stack (the MCP process inherits it).
+## Chrome extension (for "Send to Claude" on a local site)
+
+The extension is not inside the plugin, so it is loaded from a clone of the same public repo.
+
+1. `git clone https://github.com/WeAreHausTech/haus-feedback-plugin ~/Development/haus-feedback-plugin`
+2. In Claude Code, run `install_native_host` (ask "install the haus-feedback native host"). It writes `~/.haus-feedback/native-host.sh` and the host manifest `se.haus.feedback.json` into the Chrome and Chromium `NativeMessagingHosts` folders. Run it again after an nvm switch or a plugin update.
+3. In Chrome, open `chrome://extensions`, turn on Developer mode, click "Load unpacked" and choose the `extension` folder of the clone.
+4. Quit Chrome completely (Cmd-Q) and open it again.
+5. `map_origin` (or `/haus-feedback:setup`) maps each local address you open, for example `http://localhost:3000`, to the project and the customer repo. Mappings match host and port exactly; `list_mappings` shows them.
+6. On the mapped site, click the toolbar button, sign in with your `@haus.se` account, file feedback, then use the Queue tab and "Send to Claude". On the first send, allow Chrome to control Terminal when macOS asks.
+
+Update the extension with `git pull` in the clone, then reload it in `chrome://extensions`.
+
+## When it does not work
+
+1. The tools say the API was not found: `HAUS_FEEDBACK_API` is set in your shell. Unset it and restart Claude Code.
+2. The extension says the native host was not found or exited: run `install_native_host` again, then quit and reopen Chrome.
+3. "Send to Claude" says the origin is not mapped: map that exact address with `map_origin`.
+
+## Developing haus-feedback itself
+
+This folder is built from the private source repo WeAreHausTech/haus-feedback (`dist/mcp.js` from `packages/mcp`, `dist/native-host.js` from `packages/native-host`) and published to the public repo by its `Publish plugin` workflow on every merge to `main`. Developers need a seat on the source repo; see `docs/setup.md` there.
+
+1. `pnpm build` rewrites `plugin/dist/`; commit it.
+2. Set `HAUS_FEEDBACK_API=http://127.0.0.1:55421/functions/v1/api` in the environment you start Claude Code from to use the local Supabase stack, and load `packages/extension/dist-dev` (`pnpm --filter @haus-feedback/extension build:dev`). The extension and the MCP server must use the same API.
 3. Try a checkout without installing: `claude --plugin-dir ./plugin`.

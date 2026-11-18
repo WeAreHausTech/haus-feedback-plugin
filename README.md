@@ -26,3 +26,5 @@ Restart Claude Code, then ask "sign in to haus-feedback" and run `/haus-feedback
 4. Quit Chrome completely (Cmd-Q) and open it again.
 
 Update later with `git pull` in the clone and `claude plugin marketplace update haus-feedback`, then reload the extension in `chrome://extensions`.
+
+This is the official way to install haus-feedback. Mapping local sites, updating and fixing common errors: [plugin/README.md](plugin/README.md).
