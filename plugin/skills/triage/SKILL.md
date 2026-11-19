@@ -18,9 +18,10 @@ Use the haus-feedback MCP tools. If a tool says you are not signed in, run `logi
 2. `list_feedback` for that project once with status `open` and once with `in_progress`. Show the items as a numbered list (number, source, page, first line). If none, say so and stop.
 3. Ask which items to implement. Wait for the answer.
 4. For each chosen item:
-   1. `get_feedback` with its id. Read the report, the pin, console errors, failed requests and the screenshot.
-   2. Implement the fix in this repo.
-   3. Verify by running the app and exercising the page and flow the report describes. Tests alone do not count. If the app cannot be run to verify, do not set `resolved`: reply with what changed, say it is unverified, and tell the user.
-   4. `reply_to_feedback` with a short plain description of what changed. The reporter can read it, so no internal detail.
-   5. `set_feedback_status` with `resolved` (only after verification).
+   1. `set_feedback_status` with `in_progress`, before any other work on the item, so the reporter and the team see it is being handled.
+   2. `get_feedback` with its id. Read the report, the pin (including the element context: tag, text, nearest heading, label, component), console errors, failed requests and the screenshot.
+   3. Implement the fix in this repo.
+   4. Verify by running the app and exercising the page and flow the report describes. Tests alone do not count. If the app cannot be run to verify, do not set `resolved` (the item stays `in_progress`): reply with what changed, say it is unverified, and tell the user.
+   5. `reply_to_feedback` with a short plain description of what changed. The reporter can read it, so no internal detail.
+   6. `set_feedback_status` with `resolved` (only after verification).
 5. Report which items were fixed and which were skipped, and why.
